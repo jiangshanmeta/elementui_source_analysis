@@ -4,3 +4,4 @@
 * [button](button.md)
 * [radio和checkbox](radio_checkbox.md)
 * [badge](badge.md)
+* [card](card.md)
