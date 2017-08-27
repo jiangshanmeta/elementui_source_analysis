@@ -7,3 +7,4 @@
 * [card](card.md)
 * [breadcrumb](breadcrumb.md)
 * [collapse](collapse.md)
+* [input](input.md)
