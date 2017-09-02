@@ -8,3 +8,4 @@
 * [breadcrumb](breadcrumb.md)
 * [collapse](collapse.md)
 * [input](input.md)
+* [数字输入框](input_number.md)
