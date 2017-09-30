@@ -10,3 +10,4 @@
 * [input](input.md)
 * [数字输入框](input_number.md)
 * [tag](tag.md)
+* [switch](switch.md)
