@@ -1,0 +1,3 @@
+element-ui的alert组件，功能上和bootstrap的alert插件是一致的。但是element-ui对于alert的内容有更多的限制，他把内容分为了icon、title和description三块(对此有更多的配置项)，bootstrap是把这些都看成一个整体，即alert的内容，由开发者自行处理。某种意义上讲element-ui的alert相当于是对bootstrap的alert的包装，即把内容分成了三个独立的基本单元，供业务层使用。
+
+我曾经尝试过把bootstrap的alert插件改成vue组件的形式，这个组件没什么难度。而且我也没再element-ui的实现中发现什么令我觉得特别的地方。所以大家就简单看看源码就好了。
