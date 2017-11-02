@@ -12,3 +12,4 @@
 * [tag](tag.md)
 * [switch](switch.md)
 * [alert](alert.md)
+* [message](message.md)
