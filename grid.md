@@ -2,60 +2,15 @@
 
 ## row
 
-element-ui实现的栅格有两种模式，一种是基于浮动的，另一种是基于flex，负责切换这两个的是```type```属性。通过gutter属性，栅格系统可以设定不同的槽宽度。通过tag属性，我们可以指定要渲染的元素标签。这个写起来其实没难度，我的一种实现是这样的：
-
-```vue
-<template>
-    <component :is="tag" :style="computedStyle" :class="computedClass">
-        <slot></slot>
-    </component>
-</template>
-
-<script>
-export default{
-    name:'ElRow',
-    props:{
-        type:{
-            type:String,
-            default:'float'
-        },
-        gutter:{
-            type:Number,
-            default:0,
-        },
-        tag:{
-            type:String,
-            default:'div',
-        },
-    },
-    computed:{
-        computedStyle(){
-            let data = {};
-            if(this.gutter){
-                data['marginLeft'] = `-${this.gutter/2}px`;
-                data['marginRight'] = data['marginLeft'];
-            }
-            return data;
-        },
-        computedClass(){
-            let data = ['el-row'];
-            if(this.type === 'flex'){
-                data.push('el-row--flex');
-            }
-            return data;
-        },
-    },
-}
-</script>
-```
-
-elementui直接采用了render函数的写法，毕竟这个组件不是很复杂：
+element-ui直接采用了render函数的写法，毕竟这个组件不是很复杂：
 
 ```javascript
 export default {
   name: 'ElRow',
+  // 用于给col组件判断是否是row组件的
   componentName: 'ElRow',
   props: {
+    // 可以自定义标签类型
     tag: {
       type: String,
       default: 'div'
@@ -71,10 +26,9 @@ export default {
       default: 'top'
     }
   },
-
   computed: {
     style() {
-      var ret = {};
+      const ret = {};
 
       if (this.gutter) {
         ret.marginLeft = `-${this.gutter / 2}px`;
@@ -87,6 +41,7 @@ export default {
 
   render(h) {
     return h(this.tag, {
+      // 其实class也可以作为computed属性
       class: [
         'el-row',
         this.justify !== 'start' ? `is-justify-${this.justify}` : '',
@@ -99,11 +54,28 @@ export default {
 };
 ```
 
-上面的代码和我的实现是等价的，一个要注意的点是这里有个自定义属性componentName，在讲col的实现时我们会看到这个参数的用途。
+row组件的render函数用jsx可以这么写：
+
+```javascript
+render(h){
+    const Tag = this.tag;
+    return (
+        <Tag
+            class={this.cls}
+            style={this.style}
+        >
+            {this.$slots.default}
+        </Tag>
+    );
+}
+```
+
+
+
 
 ## col
 
-对于col来说，占多少个格子，偏移多少这种都是很好实现的，一个难点在于如何获取gutter的大小，毕竟gutter是设定在row上的而不是col上的。对于这个问题element-ui是这么解决的：
+对于col组件来说，一个难题是如何获取gutter，因为gutter是row组件的prop而不是col组件的prop。
 
 ```javascript
   computed: {
@@ -117,6 +89,24 @@ export default {
   },
 ```
 
-我们向上寻找最近的ElRow，直接访问它的gutter属性即可。在row中提到的自定义属性componentName是为了表示这个组件是ElRow。
+这个有点类似于provide/inject的实现，就是不断向上查找到最近的row组件，然后获取row组件的gutter属性。如果要用provide/inject的话，row组件provide gutter属性并不是一个好主意，因为即使利用getter ，inject的时候也只是一个简单值，并不是响应式的，一个比较常见的解决方案是provide整个组件实例。
 
-ElCol的其他feature的相关实现请自行阅读相关源码。
+```javascript
+provide(){
+  return {
+    // provide整个组件实例
+    row:this
+  }
+}
+```
+
+考虑到col组件只是一个布局展示性质的组件，没有自身状态和生命周期，可以考虑改写成functional component，但是此时parent指向和有状态组件是不一致的，改写的时候需要把gutter作为prop传递给col组件。
+
+
+
+
+
+
+
+
+

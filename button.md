@@ -27,26 +27,14 @@ export default{
         round: Boolean,
         circle: Boolean
     },
-    inject: {
-        elForm: {
-            default: ''
-        },
-        elFormItem: {
-            default: ''
-        }
-    },
-    render(h,{slots,data,props,injections,parent}){
-        const _elFormItemSize = (injections.elFormItem || {}).elFormItemSize;
-        // 之所以需要parent，是因为element-ui在vue prototype上添加了$ELEMENT属性
-        // 但是functional component没有this,需要借助父组件访问该属性
-        const buttonSize = props.size || _elFormItemSize || (parent.$ELEMENT || {}).size;
-        const buttonDisabled = props.disabled || (injections.elForm || {}).disabled;
+    render(h,{slots,data,props,parent}){
+        const buttonSize = props.size || (parent.$ELEMENT || {}).size;
         const cls = [
             'el-button',
             props.type ? 'el-button--' + props.type : '',
             buttonSize ? 'el-button--' + buttonSize : '',
             {
-                'is-disabled': buttonDisabled,
+                'is-disabled': props.disabled,
                 'is-loading': props.loading,
                 'is-plain': props.plain,
                 'is-round': props.round,
@@ -56,7 +44,7 @@ export default{
         return (
             <button
                 class={cls}
-                disabled={buttonDisabled || props.loading}
+                disabled={props.disabled || props.loading}
                 autofocus={props.autofocus}
                 type={props.nativeType}
                 {...data}
@@ -69,6 +57,9 @@ export default{
     },
 }
 ```
+
+这里并没有完全复现element-ui的button组件的功能，因为在[slot中的functional component和正常的component parent指向并不一致](https://github.com/vuejs/vue/issues/4550)，这意味着基于基于节点树的功能(如provide/inject)表现可能不一致。
+
 
 顺便还有elButtonGroup组件，它本身仅仅是个容器，所以也是适合改造成functional component的：
 
