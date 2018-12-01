@@ -1,32 +1,69 @@
-breadcrumb在我看来是类似于card组件的CSS占主导的组件，所以就简单一提。
-
-首先，breadcrumb元素由breadcrumb和breadcrumb-item两个组件构成，这两个组件的关系类似于button-group组件和button组件。前一个组件除了包了一层之外基本不做什么，后一个组件才负责主要功能。
-
-然后，breadcrumb-item是真正的面包屑元素，它由两部分构成：item__inner 和 separator。
-
-```html
-<template>
-  <span class="el-breadcrumb__item">
-    <span class="el-breadcrumb__item__inner" ref="link"><slot></slot></span>
-    <span class="el-breadcrumb__separator">{{separator}}</span>
-  </span>
-</template>
-```
-
-breadcrumb-item可以当做router-link元素使用，其本质上是利用了vue-router的编程式导航：
+类似于row和col组件，breadcrumb组件和breadcrumb-item组件也是成对出现的，breadcrumb-item组件也需要从breadcrumb组件获取必要的信息。在说前者的时候，我已经提到了利用provide/inject处理这种有父子关系的组件的通信是很有用的，breadcrumb就是采用了这一方式。
 
 ```javascript
-var self = this;
-if (this.to) {
-    let link = this.$refs.link;
-    link.addEventListener('click', _ => {
-        let to = this.to;
-        self.replace ? self.$router.replace(to)
-                        : self.$router.push(to);
-    });
+// breadcrumb组件把自身向下注入,item就能获取seperator的信息了
+provide() {
+    return {
+        elBreadcrumb: this
+    };
+},
+```
+
+关于这两个组件组件，有几个地方的实现我不太理解：
+
+```javascript
+//breadcrumb
+mounted() {
+  // 获取最后一个item的dom节点，添加属性
+  const items = this.$el.querySelectorAll('.el-breadcrumb__item');
+  if (items.length) {
+    items[items.length - 1].setAttribute('aria-current', 'page');
+  }
 }
 ```
 
-这一段代码让我很费解的一个地方是为什么特意使用了self来引用this，考虑到这里使用了箭头函数没有什么this指向问题。
+一方面是考虑到breadcrumb的内容可能是动态的，意味着最后一个item可能是变化的，这种只处理一次的做法不见得合适。另一方面是为什么要操作dom，操作vnode就可以完成这一点：
 
-最后是CSS部分。breadcrumb-item是通过浮动实现基础布局的(其实这里用inline-block也可以)，最后一个breadcrumb-item通过:last-child选择器选中，这也是这个选择器中规中矩的使用方法。
+```javascript
+render(h){
+    const children = this.$slots.default;
+    if(!Array.isArray(children)){
+        return null;
+    }
+    // 筛选breadcrumb-item的vnode
+    const breadcrumbItemVNodes = children.filter((vnode)=>vnode.componentOptions && vnode.componentOptions.tag === 'meta-breadcrumb-item')
+
+    if(breadcrumbItemVNodes.length === 0){
+        return null;
+    }
+    // 最后一个添加属性
+    const lastBreadcrumnItemVNode = breadcrumbItemVNodes[breadcrumbItemVNodes.length-1];
+    const attrs = lastBreadcrumnItemVNode.data.attrs || (lastBreadcrumnItemVNode.data.attrs={});
+    attrs['arial-current'] = 'page';
+
+    return (
+        <div
+            class="el-breadcrumb"
+            aria-label="Breadcrumb"
+            role="navigation"
+        >
+            {breadcrumbItemVNodes}
+        </div>
+    )
+},
+```
+
+
+另一个不太理解的是在breadcrumb-item组件上：
+
+```javascript
+const link = this.$refs.link;
+link.setAttribute('role', 'link');
+link.addEventListener('click', _ => {
+  const { to, $router } = this;
+  if (!to || !$router) return;
+  this.replace ? $router.replace(to) : $router.push(to);
+});
+```
+
+一般而言是尽可能不要利用ref碰DOM节点，而且这里拿到DOM节点仅仅是为了添加事件，为啥不用vue提供的语法绑定事件而是要手动绑定事件？
