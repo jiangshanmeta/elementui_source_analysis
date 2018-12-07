@@ -27,3 +27,13 @@ element-ui为tag进入和退出做了过渡效果：
 ```
 
 效果不复杂，就是透明度的改变和水平方向上的缩放。
+
+
+这个组件也支持禁用过渡效果：
+
+```html
+<transition :name="disableTransitions ? '' : 'el-zoom-in-center'">
+</transition>
+```
+
+这个组件如果是不需要过渡效果，其实用functional component改写更好
