@@ -3,6 +3,7 @@
 * [栅格系统](grid.md)
 * [container](container.md)
 * [button](button.md)
+* [radio](radio.md)
 * [radio和checkbox](radio_checkbox.md)
 * [badge](badge.md)
 * [card](card.md)
