@@ -4,7 +4,7 @@
 * [container](container.md)
 * [button](button.md)
 * [radio](radio.md)
-* [radio和checkbox](radio_checkbox.md)
+* [checkbox](checkbox.md)
 * [badge](badge.md)
 * [card](card.md)
 * [breadcrumb](breadcrumb.md)
