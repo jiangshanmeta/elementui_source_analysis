@@ -9,6 +9,7 @@
 * [card](card.md)
 * [breadcrumb](breadcrumb.md)
 * [collapse](collapse.md)
+* [tab](tab.md)
 * [input](input.md)
 * [数字输入框](input_number.md)
 * [tag](tag.md)
