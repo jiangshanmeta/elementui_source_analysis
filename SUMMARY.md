@@ -10,6 +10,7 @@
 * [breadcrumb](breadcrumb.md)
 * [collapse](collapse.md)
 * [tab](tab.md)
+* [rate](rate.md)
 * [input](input.md)
 * [数字输入框](input_number.md)
 * [tag](tag.md)
