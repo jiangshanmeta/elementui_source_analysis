@@ -12,6 +12,7 @@
 * [tab](tab.md)
 * [rate](rate.md)
 * [step](step.md)
+* [progress](progress.md)
 * [input](input.md)
 * [数字输入框](input_number.md)
 * [tag](tag.md)
