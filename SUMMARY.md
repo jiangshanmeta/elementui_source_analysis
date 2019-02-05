@@ -19,3 +19,4 @@
 * [switch](switch.md)
 * [alert](alert.md)
 * [message](message.md)
+* [carousel](carousel.md)

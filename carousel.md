@@ -1,0 +1,7 @@
+轮播包含两个组件:carousel和carousel-item 。 其核心实现思路是carousel组件维护一个activeIndex，然后carousel-item根据activeIndex即自己的索引决定位置及位置的变换(resetItemPosition方法)。
+
+同时这也是常见的Group/Item型组件。carousel使用$children获取子组件，按理说这个属性不能保证顺序，一般情况下所有子节点都是一次生成再也不动了，所以也够用了。
+
+prev/next两个button的点击事件的handler以及indicator的mouseenter事件handler都做了节流处理，避免过快调用。
+
+整个容器监听了resize事件，用来做必要的重置。
